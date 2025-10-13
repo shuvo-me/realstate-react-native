@@ -1,6 +1,10 @@
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 
 const ProtectedAppLayout = () => {
+  const session = false;
+  if (!session) {
+    return <Redirect href={"/signin"} />;
+  }
   return (
     <Stack
       screenOptions={{

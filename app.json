@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "realstate",
+    "name": "RealState",
     "slug": "realstate",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -29,30 +29,18 @@
       [
         "expo-splash-screen",
         {
+          "backgroundColor": "#FFFFFF",
           "image": "./assets/images/splash.png",
-          "resizeMode": "cover",
-          "backgroundColor": "#ffffff",
+
           "dark": {
+            "image": "./assets/images/splash.png",
             "backgroundColor": "#000000"
           },
-          "enableFullScreenImage_legacy": true
-        }
-      ],
-      [
-        "expo-font",
-        {
-          "fonts": [
-            "./assets/fonts/Rubik-Bold.ttf",
-            "./assets/fonts/Rubik-ExtraBold.ttf",
-            "./assets/fonts/Rubik-Medium.ttf",
-            "./assets/fonts/Rubik-Light.ttf",
-            "./assets/fonts/Rubik-Regular.ttf",
-            "./assets/fonts/Rubik-Semibold.ttf"
-          ]
+          "imageWidth": 200,
+          "resizeMode": "cover"
         }
       ]
     ],
-
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

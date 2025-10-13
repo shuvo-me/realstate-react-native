@@ -9,7 +9,7 @@ export default function SigninScreen() {
         alignItems: "center",
       }}
     >
-      <Text>Sign in Screen</Text>
+      <Text className=" font-rubik">Sign in Screen</Text>
     </View>
   );
 }
