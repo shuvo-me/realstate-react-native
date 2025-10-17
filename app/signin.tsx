@@ -3,6 +3,7 @@ import images from "@/constants/images";
 import { signin } from "@/lib/appwrite";
 import { useAuthStore } from "@/lib/store";
 import { useRouter } from "expo-router";
+import { useTransition } from "react";
 import {
   Alert,
   Image,
@@ -17,16 +18,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function SigninScreen() {
   const setSession = useAuthStore((state) => state.setSession);
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
-  const handleSignin = async () => {
-    const res = await signin();
+  const handleSignin = () => {
+    startTransition(async () => {
+      const res = await signin();
 
-    if ((res as Models.Session)?.$id) {
-      setSession(res as Models.Session);
-      router.replace("/");
-    } else {
-      Alert.alert("Error", "Failed to login");
-    }
+      if ((res as Models.Session)?.$id) {
+        setSession(res as Models.Session);
+        router.replace("/");
+      } else {
+        Alert.alert("Error", "Failed to login");
+      }
+    });
   };
 
   return (
@@ -60,6 +64,7 @@ export default function SigninScreen() {
               />
               <Text className=" text-black-1 font-rubik-medium text-lg text-center py-5">
                 Sign In with Google
+                {isPending && "Loading....."}
               </Text>
             </View>
           </TouchableOpacity>
