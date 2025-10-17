@@ -52,12 +52,28 @@ export async function signin() {
 
 export async function signout() {
   try {
-    const res = await account.deleteSession({
+    await account.deleteSession({
       sessionId: "current",
     });
 
-    return res;
+    return true;
   } catch (error) {
     console.error(error);
+    return false;
+  }
+}
+
+export async function getUser() {
+  try {
+    const res = await account.get();
+    if (!res.$id) {
+      throw new Error("Can not get user");
+    }
+
+    const userAvatar = avatar.getInitials(res.name);
+    return { ...res, avatar: userAvatar.toString() };
+  } catch (error) {
+    console.error(error);
+    return false;
   }
 }
