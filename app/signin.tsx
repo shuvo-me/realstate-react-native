@@ -1,10 +1,26 @@
 import icons from "@/constants/icons";
 import images from "@/constants/images";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { signin } from "@/lib/appwrite";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SigninScreen() {
-  const handleSignin = async () => {};
+  const handleSignin = async () => {
+    const res = await signin();
+
+    if (res) {
+      console.log("Login success!");
+    } else {
+      Alert.alert("Error", "Failed to login");
+    }
+  };
 
   return (
     <SafeAreaView className=" bg-accent-100 flex-1">
