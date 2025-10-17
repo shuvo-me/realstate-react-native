@@ -1,7 +1,9 @@
+import { useAuthStore } from "@/lib/store";
 import { Redirect, Stack } from "expo-router";
 
 const ProtectedAppLayout = () => {
-  const session = false;
+  const session = useAuthStore((state) => state.session);
+
   if (!session) {
     return <Redirect href={"/signin"} />;
   }

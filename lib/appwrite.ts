@@ -43,7 +43,7 @@ export async function signin() {
 
     if (!session) throw new Error("Failed to create session");
 
-    return true;
+    return session;
   } catch (error) {
     console.error(error);
     return false;

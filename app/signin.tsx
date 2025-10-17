@@ -1,6 +1,8 @@
 import icons from "@/constants/icons";
 import images from "@/constants/images";
 import { signin } from "@/lib/appwrite";
+import { useAuthStore } from "@/lib/store";
+import { useRouter } from "expo-router";
 import {
   Alert,
   Image,
@@ -9,14 +11,19 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import type { Models } from "react-native-appwrite";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SigninScreen() {
+  const setSession = useAuthStore((state) => state.setSession);
+  const router = useRouter();
+
   const handleSignin = async () => {
     const res = await signin();
 
-    if (res) {
-      console.log("Login success!");
+    if ((res as Models.Session)?.$id) {
+      setSession(res as Models.Session);
+      router.replace("/");
     } else {
       Alert.alert("Error", "Failed to login");
     }
