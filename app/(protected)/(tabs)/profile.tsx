@@ -1,8 +1,46 @@
 import icons from "@/constants/icons";
 import images from "@/constants/images";
-import React from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { FC } from "react";
+import {
+  Image,
+  ImageSourcePropType,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+type SettingsItemPropType = {
+  icon: ImageSourcePropType;
+  title: string;
+  onPress?: () => void;
+  textStyle?: string;
+  showArrow?: boolean;
+};
+
+const SettingsItem: FC<SettingsItemPropType> = ({
+  icon,
+  title,
+  onPress,
+  textStyle,
+  showArrow = true,
+}) => {
+  return (
+    <TouchableOpacity
+      className=" flex-row flex items-center justify-between py-3"
+      onPress={onPress}
+    >
+      <View className=" flex-row items-center gap-3">
+        <Image source={icon} className=" size-6" />
+        <Text className={`text-lg font-rubik-medium text-black-1 ${textStyle}`}>
+          {title}
+        </Text>
+      </View>
+      {showArrow && <Image source={icons.rightArrow} className=" size-5" />}
+    </TouchableOpacity>
+  );
+};
 
 const ProfileScreen = () => {
   return (
@@ -33,6 +71,10 @@ const ProfileScreen = () => {
           <Text className=" font-rubik-semibold text-2xl text-black-1">
             ShuvoJsDev
           </Text>
+        </View>
+        <View className=" flex-col mt-10">
+          <SettingsItem icon={icons.calendar} title="My Bookings" />
+          <SettingsItem icon={icons.wallet} title="Payments" />
         </View>
       </ScrollView>
     </SafeAreaView>
