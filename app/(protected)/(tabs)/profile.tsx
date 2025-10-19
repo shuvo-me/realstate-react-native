@@ -54,7 +54,6 @@ const ProfileScreen = () => {
     queryFn: getUser,
   });
 
-  console.log({ data });
   async function handleSignout() {
     const res = await signout();
     if (res) {
