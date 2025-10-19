@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
   return (
-    <SafeAreaView>
+    <SafeAreaView className=" bg-white flex-1">
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="flex-row items-center justify-between px-5 pt-4">
           <View className="flex-row items-center gap-1">
@@ -33,7 +33,10 @@ const HomeScreen = () => {
             />
           </View>
         </View>
-        <Search />
+
+        <View className=" px-5 mt-6">
+          <Search />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
