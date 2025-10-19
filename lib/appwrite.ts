@@ -1,7 +1,6 @@
 import * as Linking from "expo-linking";
 import { openAuthSessionAsync } from "expo-web-browser";
 import { Account, Avatars, Client, OAuthProvider } from "react-native-appwrite";
-
 export const config = {
   platform: "realstate",
   endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
@@ -39,7 +38,7 @@ export async function signin() {
 
     if (!secret || !userId) throw new Error("Can not find secret & userId");
 
-    const session = await account.createSession(userId, secret);
+    const session = await account.createSession({ userId, secret });
 
     if (!session) throw new Error("Failed to create session");
 
@@ -70,10 +69,16 @@ export async function getUser() {
       throw new Error("Can not get user");
     }
 
-    const userAvatar = avatar.getInitials(res.name);
-    return { ...res, avatar: userAvatar.toString() };
+    return { ...res };
   } catch (error) {
-    console.error(error);
+    console.error("getUser error:", error);
     return false;
   }
+}
+
+async function getAvatarUrl() {
+  const res = await fetch("https://avatar.iran.liara.run/public/boy");
+  const image = await res.json();
+
+  return image;
 }
