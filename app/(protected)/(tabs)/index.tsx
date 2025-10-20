@@ -2,7 +2,7 @@ import Search from "@/components/Search";
 import icons from "@/constants/icons";
 import images from "@/constants/images";
 import React from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
@@ -36,6 +36,18 @@ const HomeScreen = () => {
 
         <View className=" px-5 mt-6">
           <Search />
+        </View>
+        <View className=" my-6 ">
+          <View className=" flex-row items-center justify-between px-5">
+            <Text className=" text-xl font-rubik-bold text-black-1">
+              Featured
+            </Text>
+            <TouchableOpacity>
+              <Text className=" text-base font-rubik-bold text-primary">
+                See All
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
