@@ -1,4 +1,5 @@
 import { Card, FeaturedCard } from "@/components/Cards";
+import Filters from "@/components/Filters";
 import Search from "@/components/Search";
 import icons from "@/constants/icons";
 import images from "@/constants/images";
@@ -61,11 +62,15 @@ const HomeScreen = () => {
             <Text className="text-xl font-rubik-bold text-black-1">
               Our Recommendation
             </Text>
+
             <TouchableOpacity>
               <Text className=" text-base font-rubik-bold text-primary">
                 See All
               </Text>
             </TouchableOpacity>
+          </View>
+          <View>
+            <Filters />
           </View>
           <View className="flex-row gap-5">
             <Card />
