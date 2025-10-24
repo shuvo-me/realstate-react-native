@@ -47,7 +47,7 @@ export const Card: FC<FeaturedCardProps> = ({ onPress }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="px-3 py-4 rounded-2xl gap-3 shadow-lg shadow-black-1/70 bg-white flex-1"
+      className="px-3 py-4 rounded-2xl gap-3 shadow-lg shadow-black-1/70 bg-white flex-1 mt-4"
     >
       <View className=" h-40 w-full aspect-auto rounded-2xl relative">
         <Image source={images.japan} className="size-full rounded-2xl" />
