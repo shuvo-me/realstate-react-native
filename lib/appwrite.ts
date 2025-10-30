@@ -75,10 +75,3 @@ export async function getUser() {
     return false;
   }
 }
-
-async function getAvatarUrl() {
-  const res = await fetch("https://avatar.iran.liara.run/public/boy");
-  const image = await res.json();
-
-  return image;
-}
