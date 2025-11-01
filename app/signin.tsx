@@ -2,6 +2,7 @@ import icons from "@/constants/icons";
 import images from "@/constants/images";
 import { signin } from "@/lib/appwrite";
 import { useAuthStore } from "@/lib/store";
+import { performOAuth } from "@/lib/supabase";
 import { useRouter } from "expo-router";
 import { useTransition } from "react";
 import {
@@ -53,7 +54,7 @@ export default function SigninScreen() {
             Login to Real Scout with Google
           </Text>
           <TouchableOpacity
-            onPress={handleSignin}
+            onPress={performOAuth}
             className=" rounded-full bg-white shadow-md shadow-zinc-300 mt-5 flex"
           >
             <View className="flex-row items-center justify-center gap-3">
