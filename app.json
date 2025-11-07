@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "com.supabase",
+    "scheme": "realstate",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -31,7 +31,6 @@
         {
           "backgroundColor": "#FFFFFF",
           "image": "./assets/images/splash.png",
-
           "dark": {
             "image": "./assets/images/splash.png",
             "backgroundColor": "#000000"
@@ -39,7 +38,8 @@
           "imageWidth": 200,
           "resizeMode": "contain"
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

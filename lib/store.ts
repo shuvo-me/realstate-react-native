@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Session } from "@supabase/supabase-js";
 import { Platform } from "react-native";
 import { Models } from "react-native-appwrite";
 import { create } from "zustand";
@@ -8,8 +9,8 @@ type AuthStoreType = {
   _isHydrated: boolean;
   setIsHydrated: (value: boolean) => void;
   user: Models.User | null;
-  session: Models.Session | null;
-  setSession: (session: Models.Session) => void;
+  session: Session | null;
+  setSession: (session: Session) => void;
 };
 
 export const useAuthStore = create<AuthStoreType>()(

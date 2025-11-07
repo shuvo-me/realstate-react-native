@@ -1,8 +1,8 @@
 import icons from "@/constants/icons";
 import images from "@/constants/images";
-import { signin } from "@/lib/appwrite";
 import { useAuthStore } from "@/lib/store";
-import { performOAuth } from "@/lib/supabase";
+import { signIn } from "@/lib/supabase";
+import { Session } from "@supabase/supabase-js";
 import { useRouter } from "expo-router";
 import { useTransition } from "react";
 import {
@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import type { Models } from "react-native-appwrite";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SigninScreen() {
@@ -23,10 +22,10 @@ export default function SigninScreen() {
 
   const handleSignin = () => {
     startTransition(async () => {
-      const res = await signin();
+      const res = await signIn();
 
-      if ((res as Models.Session)?.$id) {
-        setSession(res as Models.Session);
+      if ((res as Session)?.user.id) {
+        setSession(res as Session);
         router.replace("/");
       } else {
         Alert.alert("Error", "Failed to login");
@@ -54,7 +53,7 @@ export default function SigninScreen() {
             Login to Real Scout with Google
           </Text>
           <TouchableOpacity
-            onPress={performOAuth}
+            onPress={handleSignin}
             className=" rounded-full bg-white shadow-md shadow-zinc-300 mt-5 flex"
           >
             <View className="flex-row items-center justify-center gap-3">

@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createClient, processLock } from "@supabase/supabase-js";
-import { makeRedirectUri } from "expo-auth-session";
+import { AuthError, createClient, processLock } from "@supabase/supabase-js";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
+import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
 import { Platform } from "react-native";
 import "react-native-url-polyfill/auto";
@@ -20,9 +20,6 @@ export const supabase = createClient(
   }
 );
 
-WebBrowser.maybeCompleteAuthSession(); // required for web only
-const redirectTo = makeRedirectUri();
-
 const createSessionFromUrl = async (url: string) => {
   const { params, errorCode } = QueryParams.getQueryParams(url);
 
@@ -39,23 +36,48 @@ const createSessionFromUrl = async (url: string) => {
   return data.session;
 };
 
-export const performOAuth = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
+export const signIn = async () => {
+  try {
+    const redirectTo = Linking.createURL("/");
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo,
+        queryParams: {
+          prompt: "consent",
+        },
+        skipBrowserRedirect: true,
+      },
+    });
+    if (error) throw error;
+
+    const res = await WebBrowser.openAuthSessionAsync(
+      data?.url ?? "",
       redirectTo,
-      skipBrowserRedirect: true,
-    },
-  });
-  if (error) throw error;
+      { showInRecents: true }
+    );
 
-  const res = await WebBrowser.openAuthSessionAsync(
-    data?.url ?? "",
-    redirectTo
-  );
+    if (!res || res.type !== "success") {
+      throw new Error("Can not open mobile browser");
+    }
 
-  if (res.type === "success") {
     const { url } = res;
-    await createSessionFromUrl(url);
+    const session = await createSessionFromUrl(url);
+    return session;
+  } catch (error) {
+    console.error("auth error: ", (error as Error).message);
+    return false;
+  }
+};
+
+export const signOut = async () => {
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error("Signout error: ", (error as AuthError).message);
+    return false;
   }
 };
