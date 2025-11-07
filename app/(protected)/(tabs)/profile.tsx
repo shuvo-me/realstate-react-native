@@ -1,7 +1,7 @@
 import { settings } from "@/constants/data";
 import icons from "@/constants/icons";
-import { getUser, signout } from "@/lib/appwrite";
 import { useAuthStore } from "@/lib/store";
+import { getUser, signOut } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React, { FC } from "react";
@@ -55,7 +55,7 @@ const ProfileScreen = () => {
   });
 
   async function handleSignout() {
-    const res = await signout();
+    const res = await signOut();
     if (res) {
       useAuthStore.persist.clearStorage();
       router.replace("/signin");
@@ -66,7 +66,7 @@ const ProfileScreen = () => {
     <SafeAreaView className="h-full bg-white">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-32 px-7 h-full"
+        contentContainerClassName="pb-64 px-7 h-full"
       >
         {error ? (
           <View className="flex-1 justify-center items-center">
@@ -78,7 +78,7 @@ const ProfileScreen = () => {
           <View className="flex-1 justify-center">
             <ActivityIndicator color={"#FF8000"} />
           </View>
-        ) : data ? (
+        ) : data?.user ? (
           <>
             <View className=" mt-5 flex-row items-center justify-between">
               <Text className=" font-rubik-semibold text-xl">Profile</Text>
@@ -104,7 +104,7 @@ const ProfileScreen = () => {
                 </TouchableOpacity>
               </View>
               <Text className=" font-rubik-semibold text-2xl text-black-1 capitalize">
-                {data.name}
+                {data?.user.email}
               </Text>
             </View>
             <View className=" flex-col mt-10 border-t border-t-primary/10 pt-6">

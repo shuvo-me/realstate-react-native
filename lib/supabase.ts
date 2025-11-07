@@ -81,3 +81,13 @@ export const signOut = async () => {
     return false;
   }
 };
+
+export const getUser = async () => {
+  try {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Get user error: ", (error as AuthError).message);
+  }
+};
