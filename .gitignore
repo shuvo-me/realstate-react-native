@@ -43,3 +43,6 @@ package-lock.json
 # generated native folders
 /ios
 /android
+
+/generated/prisma
+/prisma/migrations
