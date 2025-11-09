@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Agents {
+  id         String       @id @default(uuid())
+  name       String
+  email      String       @unique
+  avatar     String       @unique
+  properties Properties[]
+}
+
+model Galleries {
+  id         String       @id @default(uuid())
+  image      String       @unique
+  properties Properties[]
+}
+
+model Reviews {
+  id         String       @id @default(uuid())
+  name       String
+  url        String
+  review     String
+  rating     Float
+  properties Properties[]
+}
+
+enum Type {
+  House
+  Townhouse
+  Condo
+  Duplex
+  Studio
+  Villa
+  Apartment
+  Other
+}
+
+enum Facilities {
+  Laundry
+  Parking
+  Gym
+  Wifi
+  Pet_Friendly
+}
+
+model Properties {
+  id          String       @id @default(uuid())
+  name        String
+  type        Type
+  description String
+  address     String
+  price       Int
+  area        Float
+  bedrooms    Int
+  bathrooms   Int
+  rating      Float
+  facilities  Facilities[]
+  agentId     String
+  agent       Agents       @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  galleryId   String
+  gallery     Galleries    @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  reviewId    String
+  reviews     Reviews      @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+}
+
+model Url {
+  id          String @id @default(uuid())
+  image       String
+  geoLocation String
+}
