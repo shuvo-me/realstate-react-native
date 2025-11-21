@@ -66,7 +66,7 @@ const ProfileScreen = () => {
     <SafeAreaView className="h-full bg-white">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-64 px-7 h-full"
+        contentContainerClassName="flex-grow"
       >
         {error ? (
           <View className="flex-1 justify-center items-center">
@@ -79,7 +79,7 @@ const ProfileScreen = () => {
             <ActivityIndicator color={"#FF8000"} />
           </View>
         ) : data?.user ? (
-          <>
+          <View className="px-5 pb-32">
             <View className=" mt-5 flex-row items-center justify-between">
               <Text className=" font-rubik-semibold text-xl">Profile</Text>
               <Image
@@ -125,9 +125,13 @@ const ProfileScreen = () => {
                 onPress={handleSignout}
               />
             </View>
-          </>
+          </View>
         ) : (
-          "Noting to show"
+          <View className="flex-1 items-center justify-center ">
+            <Text>
+              Noting to show 📵
+            </Text>
+          </View>
         )}
       </ScrollView>
     </SafeAreaView>
