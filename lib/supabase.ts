@@ -50,6 +50,7 @@ export const signIn = async () => {
         skipBrowserRedirect: true,
       },
     });
+    console.log({ data });
     if (error) throw error;
 
     const res = await WebBrowser.openAuthSessionAsync(
@@ -59,6 +60,7 @@ export const signIn = async () => {
     );
 
     if (!res || res.type !== "success") {
+      console.log({ res });
       throw new Error("Can not open mobile browser");
     }
 

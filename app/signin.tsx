@@ -24,7 +24,7 @@ export default function SigninScreen() {
     startTransition(async () => {
       const res = await signIn();
 
-      if ((res as Session)?.user.id) {
+      if ((res as Session)?.user?.id) {
         setSession(res as Session);
         router.replace("/");
       } else {

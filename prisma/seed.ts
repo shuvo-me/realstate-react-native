@@ -1,171 +1,190 @@
 import { supabase } from "@/lib/supabase";
 import {
-  agentImages,
-  galleryImages,
-  propertiesImages,
-  reviewImages,
+    agentImages,
+    galleryImages,
+    propertiesImages,
+    reviewImages,
 } from "../lib/data";
 
 const propertyTypes = [
-  "House",
-  "Townhomes",
-  "Condos",
-  "Duplexes",
-  "Studios",
-  "Villa",
-  "Apartments",
-  "Others",
+    "House",
+    "Townhouse",
+    "Condo",
+    "Duplex",
+    "Studio",
+    "Villa",
+    "Apartment",
+    "Other",
 ];
 
 const facilities = [
-  "Laundry",
-  "Car Parking",
-  "Sports Center",
-  "Cutlery",
-  "Gym",
-  "Swimming pool",
-  "Wifi",
-  "Pet Center",
+    "Laundry",
+    "Parking",
+    "Gym",
+    "Wifi",
+    "Pet_Friendly",
 ];
 
+const propertyStatuses = ["Available", "Sold", "Pending", "Rented"];
+
 function getRandomSubset<T>(
-  array: T[],
-  minItems: number,
-  maxItems: number
+    array: T[],
+    minItems: number,
+    maxItems: number
 ): T[] {
-  if (minItems > maxItems) {
-    throw new Error("minItems cannot be greater than maxItems");
-  }
-  if (minItems < 0 || maxItems > array.length) {
-    throw new Error(
-      "minItems or maxItems are out of valid range for the array"
-    );
-  }
+    if (minItems > maxItems) {
+        throw new Error("minItems cannot be greater than maxItems");
+    }
+    if (minItems < 0 || maxItems > array.length) {
+        throw new Error(
+            "minItems or maxItems are out of valid range for the array"
+        );
+    }
 
-  // Generate a random size for the subset within the range [minItems, maxItems]
-  const subsetSize =
-    Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
+    const subsetSize =
+        Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
+    const arrayCopy = [...array];
 
-  // Create a copy of the array to avoid modifying the original
-  const arrayCopy = [...array];
+    // Fisher-Yates shuffle
+    for (let i = arrayCopy.length - 1; i > 0; i--) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+        [arrayCopy[i], arrayCopy[randomIndex]] = [
+            arrayCopy[randomIndex],
+            arrayCopy[i],
+        ];
+    }
 
-  // Shuffle the array copy using Fisher-Yates algorithm
-  for (let i = arrayCopy.length - 1; i > 0; i--) {
-    const randomIndex = Math.floor(Math.random() * (i + 1));
-    [arrayCopy[i], arrayCopy[randomIndex]] = [
-      arrayCopy[randomIndex],
-      arrayCopy[i],
-    ];
-  }
-
-  // Return the first `subsetSize` elements of the shuffled array
-  return arrayCopy.slice(0, subsetSize);
+    return arrayCopy.slice(0, subsetSize);
 }
 
 export async function seed() {
-  try {
-    // Seed Agents
-    const agents = [];
-    for (let i = 1; i <= 5; i++) {
-      const { data: agent, error } = await supabase
-        .from("Agents")
-        .insert([
-          {
-            name: `Agent ${i}`,
-            email: `agent${i}@example.com`,
-            avatar: agentImages[Math.floor(Math.random() * agentImages.length)],
-          },
-        ])
-        .select()
-        .single();
+    try {
+        console.log("🌱 Starting database seeding...");
 
-      if (error) throw error;
+        // Step 1: Seed Agents
+        console.log("\n📍 Seeding Agents...");
+        const agents = [];
+        for (let i = 1; i <= 5; i++) {
+            const { data: agent, error } = await supabase
+                .from("agents")
+                .insert({
+                    name: `Agent ${i}`,
+                    email: `agent${i}@example.com`,
+                    avatar: agentImages[Math.floor(Math.random() * agentImages.length)],
+                })
+                .select()
+                .single();
 
-      agents.push(agent);
+            if (error) throw error;
+            agents.push(agent);
+        }
+        console.log(`✅ Seeded ${agents.length} agents.`);
+
+        // Step 2: Seed Properties
+        console.log("\n📍 Seeding Properties...");
+        const properties = [];
+        for (let i = 1; i <= 20; i++) {
+            const assignedAgent = agents[Math.floor(Math.random() * agents.length)];
+            const selectedFacilities = getRandomSubset(facilities, 2, 4);
+
+            const { data: property, error } = await supabase
+                .from("properties")
+                .insert({
+                    name: `Property ${i}`,
+                    type: propertyTypes[Math.floor(Math.random() * propertyTypes.length)],
+                    description: `This is a beautiful property located in a prime area. Property ${i} offers modern amenities and spacious living areas perfect for families or professionals.`,
+                    address: `${100 + i} Property Street, City ${i}, State ${Math.floor(i / 5) + 1}`,
+                    geoLocation: `${40.7128 + (Math.random() - 0.5) * 0.1},${-74.006 + (Math.random() - 0.5) * 0.1}`,
+                    price: Math.floor(Math.random() * 900000) + 100000, // $100k - $1M
+                    area: Math.floor(Math.random() * 2500) + 500, // 500-3000 sq ft
+                    bedrooms: Math.floor(Math.random() * 5) + 1, // 1-5 bedrooms
+                    bathrooms: Math.floor(Math.random() * 4) + 1, // 1-4 bathrooms
+                    rating: parseFloat((Math.random() * 2 + 3).toFixed(1)), // 3.0-5.0 rating
+                    facilities: selectedFacilities,
+                    agentId: assignedAgent.id, // ✅ Correct foreign key name
+                })
+                .select()
+                .single();
+
+            if (error) throw error;
+            properties.push(property);
+            console.log(`   ✅ Seeded property: ${property.name}`);
+        }
+        console.log(`✅ Seeded ${properties.length} properties.`);
+
+        // Step 3: Seed Galleries (after properties exist)
+        console.log("\n📍 Seeding Galleries...");
+        let galleryCount = 0;
+        for (const property of properties) {
+            // Each property gets 3-8 gallery images
+            const numGalleries = Math.floor(Math.random() * 6) + 3;
+
+            for (let i = 0; i < numGalleries; i++) {
+                const { error } = await supabase
+                    .from("galleries")
+                    .insert({
+                        image: galleryImages[Math.floor(Math.random() * galleryImages.length)],
+                        propertyId: property.id, // ✅ Valid property ID
+                    });
+
+                if (error) throw error;
+                galleryCount++;
+            }
+        }
+        console.log(`✅ Seeded ${galleryCount} galleries.`);
+
+        // Step 4: Seed Reviews (after properties exist)
+        console.log("\n📍 Seeding Reviews...");
+        let reviewCount = 0;
+        for (const property of properties) {
+            // Each property gets 3-7 reviews
+            const numReviews = Math.floor(Math.random() * 5) + 3;
+
+            for (let i = 0; i < numReviews; i++) {
+                const { error } = await supabase
+                    .from("reviews")
+                    .insert({
+                        name: `Reviewer ${reviewCount + 1}`,
+                        avatar: reviewImages[Math.floor(Math.random() * reviewImages.length)],
+                        review: `This is a ${["great", "wonderful", "fantastic", "amazing", "excellent"][Math.floor(Math.random() * 5)]} property! I ${["highly recommend", "would definitely recommend", "absolutely love", "am very satisfied with"][Math.floor(Math.random() * 4)]} it.`,
+                        rating: parseFloat((Math.random() * 2 + 3).toFixed(1)), // 3.0-5.0
+                        propertyId: property.id, // ✅ Valid property ID
+                    });
+
+                if (error) throw error;
+                reviewCount++;
+            }
+        }
+        console.log(`✅ Seeded ${reviewCount} reviews.`);
+
+        console.log("\n🎉 Data seeding completed successfully!");
+        console.log(`\n📊 Summary:
+    - Agents: ${agents.length}
+    - Properties: ${properties.length}
+    - Galleries: ${galleryCount}
+    - Reviews: ${reviewCount}
+    `);
+
+    } catch (error) {
+        console.error("\n🚫 Error seeding data:", error);
+        throw error; // Re-throw to handle in calling code
     }
-    console.log(`Seeded ${agents.length} agents.`);
+}
 
-    // Seed Reviews
-    const reviews = [];
-    for (let i = 1; i <= 20; i++) {
-      const { data: review, error } = await supabase
-        .from("Reviews")
-        .insert({
-          name: `Reviewer ${i}`,
-          avatar: reviewImages[Math.floor(Math.random() * reviewImages.length)],
-          review: `This is a review by Reviewer ${i}.`,
-          rating: Math.floor(Math.random() * 5) + 1, // Rating between 1 and 5
-        })
-        .select()
-        .single();
+// Optional: Clean database before seeding
+export async function cleanDatabase() {
+    try {
+        console.log("🧹 Cleaning database...");
 
-      if (error) throw error;
+        // Delete in reverse order of dependencies
+        await supabase.from("reviews").delete().neq("id", 0);
+        await supabase.from("galleries").delete().neq("id", 0);
+        await supabase.from("properties").delete().neq("id", 0);
+        await supabase.from("agents").delete().neq("id", 0);
 
-      reviews.push(review);
+        console.log("✅ Database cleaned successfully!");
+    } catch (error) {
+        console.error("🚫 Error cleaning database:", error);
+        throw error;
     }
-    console.log(`✅ Seeded ${reviews.length} reviews.`);
-
-    // Seed Galleries
-    const galleries = [];
-    for (const image of galleryImages) {
-      const { data: gallery, error } = await supabase
-        .from("Galleries")
-        .insert({ image })
-        .select()
-        .single();
-      if (error) throw error;
-      galleries.push(gallery);
-    }
-
-    console.log(`✅ Seeded ${galleries.length} galleries.`);
-
-    // Seed Properties
-    for (let i = 1; i <= 20; i++) {
-      const assignedAgent = agents[Math.floor(Math.random() * agents.length)];
-
-      const assignedReviews = getRandomSubset(reviews, 5, 7); // 5 to 7 reviews
-      const assignedGalleries = getRandomSubset(galleries, 3, 8); // 3 to 8 galleries
-
-      const selectedFacilities = facilities
-        .sort(() => 0.5 - Math.random())
-        .slice(0, Math.floor(Math.random() * facilities.length) + 1);
-
-      const image =
-        propertiesImages.length - 1 >= i
-          ? propertiesImages[i]
-          : propertiesImages[
-              Math.floor(Math.random() * propertiesImages.length)
-            ];
-
-      const { data: property, error } = await supabase
-        .from("Properties")
-        .insert({
-          name: `Property ${i}`,
-          type: propertyTypes[Math.floor(Math.random() * propertyTypes.length)],
-          description: `This is the description for Property ${i}.`,
-          address: `123 Property Street, City ${i}`,
-          geolocation: `192.168.1.${i}, 192.168.1.${i}`,
-          price: Math.floor(Math.random() * 9000) + 1000,
-          area: Math.floor(Math.random() * 3000) + 500,
-          bedrooms: Math.floor(Math.random() * 5) + 1,
-          bathrooms: Math.floor(Math.random() * 5) + 1,
-          rating: Math.floor(Math.random() * 5) + 1,
-          facilities: selectedFacilities,
-          image: image,
-          agent: assignedAgent.$id,
-          reviews: assignedReviews.map((review) => review.$id),
-          gallery: assignedGalleries.map((gallery) => gallery.$id),
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      console.log(`Seeded property: ${property?.name}`);
-    }
-
-    console.log("Data seeding completed.");
-  } catch (error) {
-    console.error("Error seeding data:", error);
-  }
 }

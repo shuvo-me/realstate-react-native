@@ -10,26 +10,34 @@ datasource db {
 }
 
 model Agents {
-  id         String       @id @default(uuid())
+  id         Int          @id @default(autoincrement())
   name       String
-  email      String       @unique
-  avatar     String       @unique
+  email      String
+  avatar     String
   properties Properties[]
+
+  @@map("agents")
 }
 
 model Galleries {
-  id         String       @id @default(uuid())
-  image      String       @unique
-  properties Properties[]
+  id         Int        @id @default(autoincrement())
+  image      String
+  propertyId Int
+  property   Properties @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@map("galleries")
 }
 
 model Reviews {
-  id         String       @id @default(uuid())
+  id         Int        @id @default(autoincrement())
   name       String
-  url        String
+  avatar     String
   review     String
   rating     Float
-  properties Properties[]
+  property   Properties @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId Int
+
+  @@map("reviews")
 }
 
 enum Type {
@@ -52,7 +60,7 @@ enum Facilities {
 }
 
 model Properties {
-  id          String       @id @default(uuid())
+  id          Int          @id @default(autoincrement())
   name        String
   type        Type
   description String
@@ -61,18 +69,25 @@ model Properties {
   area        Float
   bedrooms    Int
   bathrooms   Int
+  geoLocation String
   rating      Float
   facilities  Facilities[]
-  agentId     String
+  agentId     Int // Foreign key
   agent       Agents       @relation(fields: [agentId], references: [id], onDelete: Cascade)
-  galleryId   String
-  gallery     Galleries    @relation(fields: [galleryId], references: [id], onDelete: Cascade)
-  reviewId    String
-  reviews     Reviews      @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  gallery     Galleries[]
+  reviews     Reviews[]
+
+  @@index([agentId])
+  @@index([type])
+  @@index([price])
+  @@index([rating])
+  @@map("properties")
 }
 
 model Url {
-  id          String @id @default(uuid())
+  id          Int    @id @default(autoincrement())
   image       String
   geoLocation String
+
+  @@map("url")
 }

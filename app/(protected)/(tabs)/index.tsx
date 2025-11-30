@@ -2,13 +2,22 @@ import { Card, FeaturedCard } from "@/components/Cards";
 import Filters from "@/components/Filters";
 import Search from "@/components/Search";
 import icons from "@/constants/icons";
+// import {cleanDatabase, seed} from "@/prisma/seed";
 import React from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
+
+  
   return (
     <SafeAreaView className=" bg-white flex-1">
+        {/*<TouchableOpacity onPress={seed}>*/}
+        {/*    <Text>Seed</Text>*/}
+        {/*</TouchableOpacity>*/}
+        {/*<TouchableOpacity onPress={cleanDatabase}>*/}
+        {/*    <Text>Seed</Text>*/}
+        {/*</TouchableOpacity>*/}
       <FlatList
         data={[1, 2, 3, 4]}
         renderItem={({ item }) => <Card />}
